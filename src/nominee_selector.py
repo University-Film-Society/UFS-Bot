@@ -1,6 +1,4 @@
-from UFSNominee import Nominee
-from UFSNominee import Download
-
+import parsing_modules.download as Download
 import numpy
 
 class NomineeSelector:

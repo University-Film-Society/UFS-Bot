@@ -5,6 +5,10 @@
 # Replit
 .replit
 replit.nix
+poetry.lock
+pyproject.toml
+.breakpoints
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

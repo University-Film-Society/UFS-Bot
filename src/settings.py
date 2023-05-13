@@ -1,14 +1,12 @@
 ########################## INCLUDES ###########################
 # Python Libraries
 import os
-import copy
+import sys
+
 # External Libraries
 import discord
 from discord import app_commands
 from tmdbv3api import TMDb
-
-# My Files
-import csvparser
 ####################### END OF INCLUDES #######################
 
 # Initialize the client
@@ -22,10 +20,7 @@ tmdb.api_key = os.environ['TMDB_API_KEY']
 
 # Initialize keys
 BOT_TOKEN = os.environ["BOT_TOKEN"]
-UFS_GUILD_ID = os.environ["TEST_GUILD_ID"]
+UFS_GUILD_ID = os.environ["UFS_TEST_ID"]
 
-# Global variables to manage quotes
-quotes = csvparser.get_quotes('quotes.csv')
-lbquotes = csvparser.get_quotes('lbquotes.csv')
-quotes_queue = copy.deepcopy(quotes)
-lbquotes_queue = copy.deepcopy(lbquotes)
+# If syncing commands to all servers
+do_sync = False if len(sys.argv) <= 1 else True

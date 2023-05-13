@@ -1,0 +1,29 @@
+This file is for things to implement so I don't forget about them
+
+1. nominate command (only music/movie-of-the-week)
+  add functionality that only people with the exec role can use this command
+  DONE
+
+2. new member join event
+  add functionality to send a welcome message in #meet-and-greet whenever a new member joins
+  this will replace Discord's default welcome message
+  IN PROGRESS
+
+3. adminhelp command (only exec / directors-board channel)
+  displays information on the different admin commands available to exec members in the UFS bot
+  also come up with admin commands
+
+Jocelyn's baby:
+4. emoji react event for kicks
+  if a message is kick reacted, increment the number of total kicks for the member who sent the message
+    EDGE CASE: make sure to decrement if a member unreacts, otherwise multiple counts can be obtained from the same member
+  figure out storage system for this that is unaffected by bot resets (Jocelyn needs help with this part)
+  firebase? can double for quote submission, google forms integration, etc (MotW noms?)
+  trial run for emoji react event for roles (5.)
+
+6. Add Tony's reviews to the bot at some point, check the pinned message in the testing discord for members to get more reviews in for
+  If lack of reviews or more serious / long reviews, feel free to skip
+  Remember to look at newcoming member followers for the UFS LB, and add their reviews to the csv if need be
+
+7. Add a pipeline for members to fill a Google Form that will provide us with either a Letterboxd review link (lbquotes), or the name(s), quote, and date (quotes); provide an example on the form for how to fill out the quote
+  then, have this be stored in a queue for whoever has access to the bot to see if the quote/review should be added or not to the corresponding csv file in the UFS Bot

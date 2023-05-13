@@ -12,8 +12,39 @@ import parsing_modules.csvparser as csvparser
 
 
 class QuoteCog(commands.Cog, name="Quotes"):
+  """
+  Summary
+  ----------
+  - Cog that contains quote-related commands.
+
+  ...
+
+  Attributes
+  ----------
+  - quote_file (str): filepath to the quotes .csv
+  - lbquote_file (str): filepath to the lbquote_file .csv
+  - quotes (list[Quote]): original list of quote objects
+  - lbquotes (list[Quote]): original list of letterboxd quote objects
+  - quotes_queue (list[Quote]): copy of quotes
+  - lbquotes_queue (list[Quote]): copy of lbquotes
+  - bot (Bot): discord bot the cog is attached to
+  """
 
   def __init__(self, bot):
+    """
+    Constructs all the necessary attributes for the nominate cog object
+    
+    ...
+
+    Args:
+    - quote_file (str): filepath to the quotes .csv
+    - lbquote_file (str): filepath to the lbquote_file .csv
+    - quotes (list[Quote]): original list of quote objects
+    - lbquotes (list[Quote]): original list of letterboxd quote objects
+    - quotes_queue (list[Quote]): copy of quotes
+    - lbquotes_queue (list[Quote]): copy of lbquotes
+    - bot (Bot): discord bot the cog is attached to
+    """
     self.quote_file = "src/data/quotes/quotes.csv"
     self.lbquote_file = "src/data/quotes/lbquotes.csv"
 
@@ -27,6 +58,16 @@ class QuoteCog(commands.Cog, name="Quotes"):
 
   # Get Random UFS Member Quote Object from CSV File (handles either quotes or letterboxd quotes)
   def get_quote(self, quote_type):
+    """ Get random UFS member quote object from csv file
+    
+    ...
+
+    Args:
+    - quote_type (bool): The type of quote, True is regular quote and False is letterboxd quote
+
+    Returns:
+    - quote: quote object
+    """
     curr_queue = []
     # Get correct queue type, reset queue if necessary
     if quote_type == True:  # Regular quote
@@ -57,6 +98,7 @@ class QuoteCog(commands.Cog, name="Quotes"):
   @commands.hybrid_command(
     name="quote", description="Random out-of-context quote from a UFS member")
   async def quote(self, ctx):
+    """ Random quote from UFS member """
     # Gets a Quote object
     quote = self.get_quote(True)
 
@@ -67,6 +109,7 @@ class QuoteCog(commands.Cog, name="Quotes"):
   @commands.hybrid_command(
     name="lbquote", description="Random letterboxd review from a UFS member")
   async def lbquote(self, ctx):
+    """ Random letterboxd quote from UFS member """
     # Get Quote Object
     lbquote = self.get_quote(False)
 
@@ -80,6 +123,7 @@ class QuoteCog(commands.Cog, name="Quotes"):
 
   # Embed Quote and Send to Channel
   async def UFS_cmd_quote(ctx, quote):
+    """ Embed quote and send to server """
     # Embed Quote
     quote_embed = Embed() # Embed object
     quote_embed.set_author(name=quote.members()) # Add members as author
@@ -91,6 +135,7 @@ class QuoteCog(commands.Cog, name="Quotes"):
 
   # Embed Letterboxd Quote and Send to Channel
   async def UFS_cmd_lbquote(ctx, lbquote, poster):
+    """ Embed letterboxd quote and send to server"""
     # Embed Quote
     lbquote_embed = Embed() # Embed object
     lbquote_embed.set_thumbnail(url=poster) # Add poster jpeg

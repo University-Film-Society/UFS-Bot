@@ -1,6 +1,6 @@
 # Python Libraries
-import copy
 import random
+import copy
 
 # External Libraries
 from class_modules.movie import Movie  # Modification of tmdbv3api Movie
@@ -8,7 +8,7 @@ from discord import Embed
 from discord.ext import commands
 
 # Internal Files
-import parsing_modules.csvparser as csvparser
+from settings import quotes, lbquotes  
 
 
 class QuoteCog(commands.Cog, name="Quotes"):
@@ -21,12 +21,8 @@ class QuoteCog(commands.Cog, name="Quotes"):
 
   Attributes
   ----------
-  - quote_file (str): filepath to the quotes .csv
-  - lbquote_file (str): filepath to the lbquote_file .csv
-  - quotes (list[Quote]): original list of quote objects
-  - lbquotes (list[Quote]): original list of letterboxd quote objects
-  - quotes_queue (list[Quote]): copy of quotes
-  - lbquotes_queue (list[Quote]): copy of lbquotes
+  - quotes_queue (list[Quote]): copy of original list of quotes
+  - lbquotes_queue (list[Quote]): copy of original list of lbquotes
   - bot (Bot): discord bot the cog is attached to
   """
 
@@ -45,20 +41,38 @@ class QuoteCog(commands.Cog, name="Quotes"):
     - lbquotes_queue (list[Quote]): copy of lbquotes
     - bot (Bot): discord bot the cog is attached to
     """
-    self.quote_file = "src/data/quotes/quotes.csv"
-    self.lbquote_file = "src/data/quotes/lbquotes.csv"
-
-    self.quotes = csvparser.get_quotes(self.quote_file, True)
-    self.lbquotes = csvparser.get_quotes(self.lbquote_file, False)
-
-    self.quotes_queue = copy.deepcopy(self.quotes)
-    self.lbquotes_queue = copy.deepcopy(self.lbquotes)
+    self.quotes_queue = copy.deepcopy(quotes)
+    self.lbquotes_queue = copy.deepcopy(lbquotes)
 
     self.bot = bot
 
-  # Get Random UFS Member Quote Object from CSV File (handles either quotes or letterboxd quotes)
+  @staticmethod
+  def get_random_quote(quote_queue):
+    """ Get random UFS member quote object from a list
+    
+    ...
+
+    Args:
+    - quote_queue (list) : list of quotes
+
+    Returns:
+    - quote: quote object
+    - int: index of quote object
+    """
+    
+    # Generate a random index, return the quote at the index
+    if len(quote_queue) >= 2:  # If more than one quote in queue
+      randomQuoteIndex = random.randrange(0, len(quote_queue) - 1)
+    else:
+      randomQuoteIndex = 0
+
+    # Return random quote and its index
+    quoteToReturn = quote_queue[randomQuoteIndex]
+    return quoteToReturn, randomQuoteIndex
+    
+    
   def get_quote(self, quote_type):
-    """ Get random UFS member quote object from csv file
+    """ Get random UFS member quote object and update the corresponding list of quotes
     
     ...
 
@@ -72,19 +86,15 @@ class QuoteCog(commands.Cog, name="Quotes"):
     # Get correct queue type, reset queue if necessary
     if quote_type == True:  # Regular quote
       if len(self.quotes_queue) == 0:
-        self.quotes_queue = copy.deepcopy(self.quotes)
+        self.quotes_queue = copy.deepcopy(quotes)
       curr_queue = self.quotes_queue
     else:  # Letterboxd quote
       if len(self.lbquotes_queue) == 0:
-        self.lbquotes_queue = copy.deepcopy(self.lbquotes)
+        self.lbquotes_queue = copy.deepcopy(lbquotes)
       curr_queue = self.lbquotes_queue
 
     # Generate a random index, return the quote at the index
-    if len(curr_queue) >= 2:  # If more than one quote in queue
-      randomQuoteIndex = random.randrange(0, len(curr_queue) - 1)
-    else:
-      randomQuoteIndex = 0
-    quoteToReturn = curr_queue[randomQuoteIndex]
+    quoteToReturn, randomQuoteIndex = self.get_random_quote(curr_queue)
 
     # Delete corresponding quote from queue
     if quote_type:
@@ -122,7 +132,7 @@ class QuoteCog(commands.Cog, name="Quotes"):
     await self.UFS_cmd_lbquote(ctx, lbquote, poster)
 
   # Embed Quote and Send to Channel
-  async def UFS_cmd_quote(ctx, quote):
+  async def UFS_cmd_quote(self, ctx, quote):
     """ Embed quote and send to server """
     # Embed Quote
     quote_embed = Embed() # Embed object
@@ -134,7 +144,7 @@ class QuoteCog(commands.Cog, name="Quotes"):
     await ctx.send(embed=quote_embed)
 
   # Embed Letterboxd Quote and Send to Channel
-  async def UFS_cmd_lbquote(ctx, lbquote, poster):
+  async def UFS_cmd_lbquote(self, ctx, lbquote, poster):
     """ Embed letterboxd quote and send to server"""
     # Embed Quote
     lbquote_embed = Embed() # Embed object

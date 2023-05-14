@@ -1,9 +1,9 @@
 # External Libraries
 from discord.ext.commands import Bot, DefaultHelpCommand
-from discord import Game, Intents
+from discord import Activity, ActivityType, Intents, Object
 
 # Internal Files
-from settings import do_sync
+from settings import do_sync, UFS_GUILD_ID, lbquotes
 from cogs.nominate_cog import NominateCog
 from cogs.gif_cog import GifCog
 from cogs.quote_cog import QuoteCog
@@ -29,14 +29,14 @@ class DiscordBot(Bot):
     await self.add_cog(QuoteCog(self))
     await self.add_cog(MiscCog(self))
 
-    # Set bot activity
-    activity = Game(name= "I see you're looking at my fingers, lad. Well let me tell you the story of FART and BOMB...",
-                    type=1)
+    # Set bot activity to watching a random movie
+    movie, _ = QuoteCog.get_random_quote(lbquotes)
+    activity = Activity(type=ActivityType.watching, name=movie.film())
     await self.change_presence(activity=activity)
 
     if (do_sync):
       print("\nSyncing...", end= " ")
-      await self.tree.sync()
+      await self.tree.sync(guild=Object(id=UFS_GUILD_ID))
       print("synced.")
 
     # Inform dev of successful login

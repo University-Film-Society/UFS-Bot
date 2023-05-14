@@ -33,21 +33,10 @@ class NominateCog(commands.Cog, name="Nominate"):
     - music_nominee_file (str): filepath to the music .csv
     - bot (Bot): discord bot the cog is attached to
     """
-    self.movie_nominee_file = "data/nominees/Movie of the Month.csv"
-    self.music_nominee_file = "data/nominees/Music of the Week.csv"
+    self.movie_nominee_file = "src/data/nominees/Movie of the Month.csv"
+    self.music_nominee_file = "src/data/nominees/Music of the Week.csv"
     
     self.bot = bot
-
-  def is_admin(ctx):
-    """Check if the user is allowed to use an admin-only slash command
-
-    ...
-
-    Returns:
-    - bool: true if the user has an exec role, false otherwise
-    
-    """
-    return True if "exec" in [role.name for role in ctx.user.roles] else False
 
   def get_probabilities(self, nominees, total):
     """Set the probabilities of being nominated for each user depending on their check
@@ -104,9 +93,20 @@ class NominateCog(commands.Cog, name="Nominate"):
 
   ########## ADMIN ONLY COMMANDS ##########
 
+  def is_exec(ctx):
+    """Check if the user is allowed to use an admin-only slash command
+
+    ...
+
+    Returns:
+    - bool: true if the user has an exec role, false otherwise
+    
+    """
+    return True if "exec" in [role.name for role in ctx.author.roles] else False
+
   # MOVIE NOMINATION
   @commands.hybrid_command(name="nominate_film", description="Nominate for Movie of the Month (ADMIN ONLY)")
-  @commands.check(is_admin)
+  @commands.check(is_exec)
   async def nominate_film(self, ctx):
     """ Nominate members for movie """
     # Get nominees
@@ -117,7 +117,7 @@ class NominateCog(commands.Cog, name="Nominate"):
 
   # MUSIC NOMINATION
   @commands.hybrid_command(name="nominate_music", description="Nominate for Music of the Week (ADMIN ONLY)")
-  @commands.check(is_admin)
+  @commands.check(is_exec)
   async def nominate_music(self, ctx):
     """ Nominate members for music"""
     nominees = self.nominate(False)
@@ -126,12 +126,12 @@ class NominateCog(commands.Cog, name="Nominate"):
   # Error if not admin
   @nominate_film.error
   @nominate_music.error
-  async def say_error(ctx, error):
+  async def say_exec_error(self, ctx, error):
     """ Display error to member if they are not an admin"""
-    await ctx.send("You must be an admin to use this command", ephemeral=True)
+    await ctx.send("You must be an exec to use this command", ephemeral=True)
 
   # Embed Selected MotW/AotW Nominees and Send to Channel
-  async def UFS_cmd_nominate(ctx, nominees, nominee_type):
+  async def UFS_cmd_nominate(self, ctx, nominees, nominee_type):
     """ Embed message for nominations and send to server
 
     ...
@@ -148,7 +148,7 @@ class NominateCog(commands.Cog, name="Nominate"):
     if nominee_type:
       embed.set_author(name="Movie Nominees")
     else:
-      embed.set_author("Music Winner")
+      embed.set_author(name="Music Winner")
 
     # Embed to Message and Ping
     for i, nominee in enumerate(nominees, 1):

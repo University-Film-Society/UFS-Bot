@@ -11,7 +11,7 @@ def get_quotes(filename, file_type):
     csv_reader = csv.reader(file, delimiter = ';')
     for row in csv_reader:
       if row[0] == "Members": continue
-      if filename: # Regular quote
+      if file_type: # Regular quote
         currQuote = Quote(row[0], row[1].replace("$", "\n"), row[2])
         quotes.append(currQuote)
       else: # Letterboxd quote
